@@ -56,7 +56,6 @@ def go(args):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Test the provided model against the test dataset")
-
     parser.add_argument(
         "--mlflow_model",
         type=str, 

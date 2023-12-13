@@ -3,7 +3,9 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - pandas
-  - pip
+  - numpy=1.23.5
+  - pandas=1.5.3
+  - pip=23.3.1
   - pip:
-      - wandb
+      - mlflow==2.8.1
+      - wandb==0.16.0
