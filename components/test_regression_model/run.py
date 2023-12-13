@@ -35,16 +35,19 @@ def go(args):
 
     logger.info("Loading model and performing inference on test set")
     sk_pipe = mlflow.sklearn.load_model(model_local_path)
-    y_pred = sk_pipe.predict(X_test)
+    try:
+        logger.info(X_test)
+        y_pred = sk_pipe.predict(X_test)
+        # logger.info(X_test)
+        logger.info("Scoring")
+        r_squared = sk_pipe.score(X_test, y_test)
 
-    logger.info("Scoring")
-    r_squared = sk_pipe.score(X_test, y_test)
+        mae = mean_absolute_error(y_test, y_pred)
 
-    mae = mean_absolute_error(y_test, y_pred)
-
-    logger.info(f"Score: {r_squared}")
-    logger.info(f"MAE: {mae}")
-
+        logger.info(f"Score: {r_squared}")
+        logger.info(f"MAE: {mae}")
+    except  Exception as e: 
+        logger.error(e)
     # Log MAE and r2
     run.summary['r2'] = r_squared
     run.summary['mae'] = mae

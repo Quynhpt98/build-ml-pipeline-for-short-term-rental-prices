@@ -5,7 +5,7 @@
 import argparse
 import logging
 import wandb
-
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
@@ -28,9 +28,16 @@ def go(args):
 
     logger.info("Removing outlier price in dataset...")
     df = df[df.price.between(min_price, max_price)].reset_index(drop=True)
-    logger.info(f"Dataset contains {len(df)} rows with price from {min_price} to {max_price}")
-
-    df.to_csv("clean_sample.csv", index=False)
+    logger.info(f"Data contains {len(df)} rows with price from {min_price} to {max_price}")
+    logger.info("Datatime data type normalizing...")
+    dt_cols = 'last_review'
+    df[dt_cols] = pd.to_datetime(df[dt_cols])
+    logger.info(f"Convert column {dt_cols} to datetime datatype succeed.")
+    logger.info("Clean longitude and latitude...")
+    idx = df['longitude'].between(-74.25, -73.50) & df['latitude'].between(40.5, 41.2)
+    df = df[idx].copy()
+    logger.info("Clean data completely, save cleaned data...")
+ 
     # Save result to WanDB
     artifact = wandb.Artifact(
      args.output_artifact,
@@ -57,7 +64,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_artifact", 
         type=str, 
-        help="Output Artifact,
+        help="Output Artifact",
         required=True
     )
 
@@ -82,6 +89,12 @@ if __name__ == "__main__":
         required=True
     )
     
+    parser.add_argument(
+        "--output_description", 
+        type=str,
+        help="output description",
+        required=True
+    )
 
     args = parser.parse_args()
 
